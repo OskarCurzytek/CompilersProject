@@ -9,7 +9,7 @@ public class Lexer {
 
     private static final Pattern tokenPatterns = Pattern.compile(
             "\\s*(?:(tni|elbuod|loob|rahc)|" +      // Reversed types
-                    "(tnirp|fi|rof)|" +                    // Other reversed keywords
+                    "(prit|fi|rof)|" +                    // Other reversed keywords
                     "(eurt|eslaf)|" +                      // Boolean literals
                     "([a-zA-Z_][a-zA-Z0-9_]*)|" +          // Identifiers
                     "(\\d+\\.\\d+|\\d+)|" +                // Numbers
@@ -38,7 +38,7 @@ public class Lexer {
                         }
                     }else if(matcher.group(2) != null){
                         switch (matcher.group(2)){
-                            case "tnirp": tokens.add(new Token(Token.Type.TNIRP, "tnirp")); break;
+                            case "prit": tokens.add(new Token(Token.Type.PRIT, "prit")); break;
                             case "fi": tokens.add(new Token(Token.Type.FI, "fi")); break;
                             case "rof": tokens.add(new Token(Token.Type.ROF, "rof")); break;
                         }

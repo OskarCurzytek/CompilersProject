@@ -1,12 +1,17 @@
+import java.util.ArrayList;
 import java.util.List;
 
 class Parser {
     private List<Token> tokens;
     private int current = 0;
+    private final Interpreter interpreter;
+
 
     public Parser(List<Token> tokens) {
         this.tokens = tokens;
+        this.interpreter = new Interpreter();
     }
+
 
     private Token peek() {
         return tokens.get(current);
@@ -45,7 +50,7 @@ class Parser {
     private void statement() {
         if (match(Token.Type.TNI, Token.Type.ELBUOD, Token.Type.LOOB, Token.Type.RAHC)) {
             varDeclaration();
-        } else if (match(Token.Type.TNIRP)) {
+        } else if (match(Token.Type.PRIT)) {
             printStatement();
         } else {
             throw new RuntimeException("Unexpected statement.");
@@ -53,26 +58,103 @@ class Parser {
     }
 
     private void varDeclaration() {
-        Token type = previous();
+        Token type = previous();  // Type: tni, elbuod, etc.
         Token name = consume(Token.Type.IDENTIFIER, "Expected variable name.");
         consume(Token.Type.EQUALS, "Expected '=' after variable name.");
-        expression();
+        ASTNode expr = expression();
         consume(Token.Type.SEMICOLON, "Expected ';' after variable declaration.");
+
+        // Evaluate the expression and store in the interpreter
+        Object value = interpreter.evaluate(expr);
+        interpreter.assignVariable(name.value, value);
     }
 
     private void printStatement() {
         consume(Token.Type.LPAREN, "Expected '(' after 'tnirp'.");
-        expression();
+        ASTNode expr = expression();
         consume(Token.Type.RPAREN, "Expected ')' after expression.");
         consume(Token.Type.SEMICOLON, "Expected ';' after print statement.");
+
+        // Evaluate the expression and print
+        Object result = interpreter.evaluate(expr);
+        System.out.println(result);
     }
 
-    private void expression() {
-        // Handle arithmetic and literals here
+    private ASTNode expression() {
+        ASTNode left = term();  // Parse the first term
+
+        while (match(Token.Type.PLUS, Token.Type.MINUS)) {
+            Token operator = previous();
+            ASTNode right = term();  // Parse the next term
+            left = new BinaryOperationNode(left, operator, right); // Combine into AST
+        }
+        return left;
+    }
+
+    // Term parses multiplication and division
+    private ASTNode term() {
+        ASTNode left = factor();  // Parse the first factor
+
+        while (match(Token.Type.STAR, Token.Type.SLASH)) {
+            Token operator = previous();
+            ASTNode right = factor();  // Parse the next factor
+            left = new BinaryOperationNode(left, operator, right); // Combine into AST
+        }
+        return left;
+    }
+
+    // Factor parses individual literals, variables, or sub-expressions
+    private ASTNode factor() {
+        if (match(Token.Type.NUMBER)) {
+            return new LiteralNode(previous().value);  // Literal like "5" or "10.2"
+        } else if (match(Token.Type.IDENTIFIER)) {
+            return new VariableNode(previous().value);  // Variable name
+        } else if (match(Token.Type.LPAREN)) {
+            ASTNode expr = expression();  // Parse inner expression
+            consume(Token.Type.RPAREN, "Expected ')' after expression.");
+            return expr;
+        }
+        throw new RuntimeException("Expected a number, variable, or expression.");
     }
 
     private Token consume(Token.Type type, String errorMessage) {
         if (peek().type == type) return advance();
         throw new RuntimeException(errorMessage);
+    }
+
+    private void ifStatement() {
+        consume(Token.Type.LPAREN, "Expected '(' after 'fi'.");
+        ASTNode condition = expression();
+        consume(Token.Type.RPAREN, "Expected ')' after condition.");
+        consume(Token.Type.LBRACE, "Expected '{' before 'fi' block.");
+
+        List<Runnable> statements = new ArrayList<>();
+        while (!match(Token.Type.RBRACE)) {
+            statements.add(() -> statement());
+        }
+
+        if ((boolean) interpreter.evaluate(condition)) {
+            statements.forEach(Runnable::run);
+        }
+    }
+
+    private void forStatement() {
+        consume(Token.Type.LPAREN, "Expected '(' after 'rof'.");
+        varDeclaration();
+        ASTNode condition = expression();
+        consume(Token.Type.SEMICOLON, "Expected ';' after condition.");
+        ASTNode increment = expression();
+        consume(Token.Type.RPAREN, "Expected ')' after 'rof' parameters.");
+        consume(Token.Type.LBRACE, "Expected '{' before 'rof' block.");
+
+        List<Runnable> statements = new ArrayList<>();
+        while (!match(Token.Type.RBRACE)) {
+            statements.add(() -> statement());
+        }
+
+        while ((boolean) interpreter.evaluate(condition)) {
+            statements.forEach(Runnable::run);
+            interpreter.evaluate(increment);
+        }
     }
 }
