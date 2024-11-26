@@ -7,14 +7,12 @@ public class GoofyAhhCompiler {
             return;
         }
 
-        // Step 1: Read the file
         String fileName = args[0];
         String sourceCode = FileReader.readFile(fileName);
         if (sourceCode == null) {
-            return; // File could not be read
+            return;
         }
 
-        // Step 2: Lexical Analysis
         Lexer lexer = new Lexer(sourceCode);
         List<Token> tokens;
         try {
@@ -24,7 +22,6 @@ public class GoofyAhhCompiler {
             return;
         }
 
-        // Step 3: Parsing and Interpretation
         Parser parser = new Parser(tokens);
         try {
             parser.parse();

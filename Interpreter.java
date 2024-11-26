@@ -38,9 +38,9 @@ class Interpreter {
 
     private Object parseLiteral(String value) {
         if (value.matches("\\d+\\.\\d+")) {
-            return Double.parseDouble(value);  // Parse doubles
+            return Double.parseDouble(value);
         } else if (value.matches("\\d+")) {
-            return (double) Integer.parseInt(value);  // Parse integers as doubles for simplicity
+            return (double) Integer.parseInt(value);
         }
         throw new RuntimeException("Invalid literal: " + value);
     }

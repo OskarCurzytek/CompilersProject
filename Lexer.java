@@ -82,6 +82,9 @@ public class Lexer {
 
         }
         tokens.add(new Token(Token.Type.EOF, null));
+        // for(Token token : tokens){
+        //     System.out.println(token);
+        // }
         return tokens;
     }
 }

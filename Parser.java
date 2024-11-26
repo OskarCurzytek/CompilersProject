@@ -40,7 +40,6 @@ class Parser {
         return false;
     }
 
-    // Example parse method
     public void parse() {
         while (!isAtEnd()) {
             statement();
@@ -58,13 +57,12 @@ class Parser {
     }
 
     private void varDeclaration() {
-        Token type = previous();  // Type: tni, elbuod, etc.
+        Token type = previous();
         Token name = consume(Token.Type.IDENTIFIER, "Expected variable name.");
         consume(Token.Type.EQUALS, "Expected '=' after variable name.");
         ASTNode expr = expression();
         consume(Token.Type.SEMICOLON, "Expected ';' after variable declaration.");
 
-        // Evaluate the expression and store in the interpreter
         Object value = interpreter.evaluate(expr);
         interpreter.assignVariable(name.value, value);
     }
@@ -75,42 +73,39 @@ class Parser {
         consume(Token.Type.RPAREN, "Expected ')' after expression.");
         consume(Token.Type.SEMICOLON, "Expected ';' after print statement.");
 
-        // Evaluate the expression and print
         Object result = interpreter.evaluate(expr);
         System.out.println(result);
     }
 
     private ASTNode expression() {
-        ASTNode left = term();  // Parse the first term
+        ASTNode left = term();
 
         while (match(Token.Type.PLUS, Token.Type.MINUS)) {
             Token operator = previous();
-            ASTNode right = term();  // Parse the next term
-            left = new BinaryOperationNode(left, operator, right); // Combine into AST
+            ASTNode right = term();
+            left = new BinaryOperationNode(left, operator, right);
         }
         return left;
     }
 
-    // Term parses multiplication and division
     private ASTNode term() {
-        ASTNode left = factor();  // Parse the first factor
+        ASTNode left = factor();
 
         while (match(Token.Type.STAR, Token.Type.SLASH)) {
             Token operator = previous();
-            ASTNode right = factor();  // Parse the next factor
-            left = new BinaryOperationNode(left, operator, right); // Combine into AST
+            ASTNode right = factor();
+            left = new BinaryOperationNode(left, operator, right);
         }
         return left;
     }
 
-    // Factor parses individual literals, variables, or sub-expressions
     private ASTNode factor() {
         if (match(Token.Type.NUMBER)) {
-            return new LiteralNode(previous().value);  // Literal like "5" or "10.2"
+            return new LiteralNode(previous().value);
         } else if (match(Token.Type.IDENTIFIER)) {
-            return new VariableNode(previous().value);  // Variable name
+            return new VariableNode(previous().value);
         } else if (match(Token.Type.LPAREN)) {
-            ASTNode expr = expression();  // Parse inner expression
+            ASTNode expr = expression();
             consume(Token.Type.RPAREN, "Expected ')' after expression.");
             return expr;
         }
