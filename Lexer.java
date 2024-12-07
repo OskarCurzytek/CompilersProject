@@ -10,10 +10,11 @@ public class Lexer {
     private static final Pattern tokenPatterns = Pattern.compile(
             "\\s*(?:(tni|elbuod|loob|rahc)|" +      // Reversed types
                     "(prit|fi|rof)|" +                    // Other reversed keywords
-                    "(eurt|eslaf)|" +                      // Boolean literals
-                    "([a-zA-Z_][a-zA-Z0-9_]*)|" +          // Identifiers
-                    "(\\d+\\.\\d+|\\d+)|" +                // Numbers
-                    "(==|!=|<=|>=|<|>)|" +                 // Comparison operators
+                    "(eurt|eslaf)|" +                     // Boolean literals
+                    "([a-zA-Z_][a-zA-Z0-9_]*)|" +         // Identifiers
+                    "(\\d+\\.\\d+|\\d+)|" +               // Numbers
+                    "'(\\\\\\\\.|[^\\\\\\\\'])'|" +               // Character literals
+                    "(==|!=|<=|>=|<|>)|" +                // Comparison operators
                     "(\\+|\\-|\\*|\\/|=|;|,|\\(|\\)|\\{|\\}))" // Symbols
     );
 
@@ -51,8 +52,11 @@ public class Lexer {
                         tokens.add(new Token(Token.Type.IDENTIFIER, matcher.group(4)));
                     }else if (matcher.group(5) != null) {
                         tokens.add(new Token(Token.Type.NUMBER, matcher.group(5)));
-                    }else if (matcher.group(6) != null) {
-                        switch (matcher.group(6)) {
+                    }else if(matcher.group(6) != null){
+                        //System.out.println("Lexer matched CHAR_LITERAL: " + matcher.group(6));
+                        tokens.add(new Token(Token.Type.CHAR_LITERAL, matcher.group(6)));
+                    }else if (matcher.group(7) != null) {
+                        switch (matcher.group(7)) {
                             case "==": tokens.add(new Token(Token.Type.EQEQ, "==")); break;
                             case "!=": tokens.add(new Token(Token.Type.NOTEQ, "!=")); break;
                             case "<=": tokens.add(new Token(Token.Type.LESSEQ, "<=")); break;
@@ -60,8 +64,8 @@ public class Lexer {
                             case "<": tokens.add(new Token(Token.Type.LESS, "<")); break;
                             case ">": tokens.add(new Token(Token.Type.GREATER, ">")); break;
                         }
-                    }else if (matcher.group(7) != null) {
-                        switch (matcher.group(7)) {
+                    }else if (matcher.group(8) != null) {
+                        switch (matcher.group(8)) {
                             case "+": tokens.add(new Token(Token.Type.PLUS, "+")); break;
                             case "-": tokens.add(new Token(Token.Type.MINUS, "-")); break;
                             case "*": tokens.add(new Token(Token.Type.STAR, "*")); break;
@@ -82,6 +86,9 @@ public class Lexer {
 
         }
         tokens.add(new Token(Token.Type.EOF, null));
+//        for(Token token : tokens){
+//            System.out.println(token);
+//        }
         return tokens;
     }
 }

@@ -6,6 +6,11 @@ class LiteralNode extends ASTNode {
     LiteralNode(String value) {
         this.value = value;
     }
+
+    @Override
+    public String toString(){
+        return "LiteralNode(value+'" + value + "')";
+    }
 }
 
 class VariableNode extends ASTNode {

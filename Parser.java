@@ -40,7 +40,6 @@ class Parser {
         return false;
     }
 
-    // Example parse method
     public void parse() {
         while (!isAtEnd()) {
             statement();
@@ -48,6 +47,7 @@ class Parser {
     }
 
     private void statement() {
+        //System.out.println("Parsing statement, token: " + peek());
         if (match(Token.Type.TNI, Token.Type.ELBUOD, Token.Type.LOOB, Token.Type.RAHC)) {
             varDeclaration();
         } else if (match(Token.Type.PRIT)) {
@@ -60,12 +60,16 @@ class Parser {
     private void varDeclaration() {
         Token type = previous();  // Type: tni, elbuod, etc.
         Token name = consume(Token.Type.IDENTIFIER, "Expected variable name.");
+        //System.out.println("variable declaration: type =" + type + "name=" + name.value);
+
         consume(Token.Type.EQUALS, "Expected '=' after variable name.");
         ASTNode expr = expression();
+        //System.out.println("Variable initialization expression: " + expr);
         consume(Token.Type.SEMICOLON, "Expected ';' after variable declaration.");
 
         // Evaluate the expression and store in the interpreter
         Object value = interpreter.evaluate(expr);
+        //System.out.println("Variable assigned: " + name.value + " = " + value);
         interpreter.assignVariable(name.value, value);
     }
 
@@ -107,7 +111,10 @@ class Parser {
     private ASTNode factor() {
         if (match(Token.Type.NUMBER)) {
             return new LiteralNode(previous().value);  // Literal like "5" or "10.2"
-        } else if (match(Token.Type.IDENTIFIER)) {
+        }else if(match(Token.Type.CHAR_LITERAL)){
+            //System.out.println("Parsing character literal: " + previous().value);
+            return new LiteralNode(previous().value);
+        }else if (match(Token.Type.IDENTIFIER)) {
             return new VariableNode(previous().value);  // Variable name
         } else if (match(Token.Type.LPAREN)) {
             ASTNode expr = expression();  // Parse inner expression
