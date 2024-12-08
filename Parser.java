@@ -74,7 +74,7 @@ class Parser {
     }
 
     private void printStatement() {
-        consume(Token.Type.LPAREN, "Expected '(' after 'tnirp'.");
+        consume(Token.Type.LPAREN, "Expected '(' after 'prit'.");
         ASTNode expr = expression();
         consume(Token.Type.RPAREN, "Expected ')' after expression.");
         consume(Token.Type.SEMICOLON, "Expected ';' after print statement.");
@@ -116,6 +116,10 @@ class Parser {
             return new LiteralNode(previous().value);
         }else if (match(Token.Type.IDENTIFIER)) {
             return new VariableNode(previous().value);  // Variable name
+        }else if (match(Token.Type.TRUE)) {
+            return new LiteralNode("eurt"); // Represent true as a string literal for now
+        } else if (match(Token.Type.FALSE)) {
+            return new LiteralNode("eslaf"); // Represent false as a string literal for now
         } else if (match(Token.Type.LPAREN)) {
             ASTNode expr = expression();  // Parse inner expression
             consume(Token.Type.RPAREN, "Expected ')' after expression.");
@@ -131,7 +135,7 @@ class Parser {
 
     private void ifStatement() {
         consume(Token.Type.LPAREN, "Expected '(' after 'fi'.");
-        ASTNode condition = expression();
+        ASTNode condition = booleanExpression(); // Use booleanExpression for condition
         consume(Token.Type.RPAREN, "Expected ')' after condition.");
         consume(Token.Type.LBRACE, "Expected '{' before 'fi' block.");
 
@@ -163,5 +167,27 @@ class Parser {
             statements.forEach(Runnable::run);
             interpreter.evaluate(increment);
         }
+    }
+
+    private ASTNode booleanExpression() {
+        ASTNode left = comparison(); // Start with a comparison
+
+        while (match(Token.Type.OR)) { // Handle "or"
+            Token operator = previous();
+            ASTNode right = comparison();
+            left = new BinaryOperationNode(left, operator, right);
+        }
+        return left;
+    }
+
+    private ASTNode comparison() {
+        ASTNode left = term(); // Start with a term
+
+        while (match(Token.Type.AND)) { // Handle "and"
+            Token operator = previous();
+            ASTNode right = term();
+            left = new BinaryOperationNode(left, operator, right);
+        }
+        return left;
     }
 }

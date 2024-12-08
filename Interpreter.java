@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Objects;
 
 class Interpreter {
     private HashMap<String, Object> symbolTable = new HashMap<>();
@@ -21,12 +22,17 @@ class Interpreter {
             Object right = evaluate(binaryNode.right);
             //System.out.println("Left: " + left + ", Right: " + right); // Debug
             switch (binaryNode.operator.type) {
+                case OR:
+                    ensureBooleanOperands(left, right, "or");
+                    return (Boolean) left || (Boolean) right;
+                case AND:
+                    ensureBooleanOperands(left, right, "and");
+                    return (Boolean) left && (Boolean) right;
                 case PLUS:
-                    if (left instanceof Integer && right instanceof Integer) {
-                        return (Integer) left + (Integer) right; // Integer addition
-                    } else {
-                        return ((Number) left).doubleValue() + ((Number) right).doubleValue(); // Convert to double for addition
-                    }
+                    ensureNumericOperands(left, right, "+");
+                    return (left instanceof Integer && right instanceof Integer)
+                            ? (Integer) left + (Integer) right
+                            : ((Number) left).doubleValue() + ((Number) right).doubleValue();
                 case MINUS:
                     if (left instanceof Integer && right instanceof Integer) {
                         return (Integer) left - (Integer) right; // Integer subtraction
@@ -62,6 +68,10 @@ class Interpreter {
         //System.out.println("parseLiteral received value: " + value);
         if (value.matches("\\d+\\.\\d+")) {
             return Double.parseDouble(value); // Parse doubles
+        } else if (value.equals("eurt")) {
+            return true; // Boolean true
+        } else if (value.equals("eslaf")) {
+            return false; // Boolean false
         } else if (value.matches("\\d+")) {
             return Integer.parseInt(value); // Parse integers as doubles for simplicity
         } else if (value.length() == 1) { // Match a single character inside single quotes
@@ -72,11 +82,33 @@ class Interpreter {
     }
 
     public void assignVariable(String name, Object value) {
-        //System.out.println("Assigning variable: " + name + " = " + value + " (type: " + value.getClass().getSimpleName() + ")");
+        if (name == null || name.trim().isEmpty()) {
+            throw new RuntimeException("Variable name cannot be null or empty.");
+        }
+        if (!name.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
+            throw new RuntimeException("Invalid variable name: " + name);
+        }
+        // Further type validations for `value` can be added here if needed.
         symbolTable.put(name, value);
     }
 
     public void printSymbolTable() {
         System.out.println("Symbol Table: " + symbolTable);
+    }
+
+    private void ensureBooleanOperands(Object left, Object right, String operator) {
+        if (!(left instanceof Boolean) || !(right instanceof Boolean)) {
+            throw new RuntimeException("Operator '" + operator + "' requires boolean operands. Got: " +
+                    left.getClass().getSimpleName() + " and " +
+                    right.getClass().getSimpleName());
+        }
+    }
+
+    private void ensureNumericOperands(Object left, Object right, String operator) {
+        if (!(left instanceof Number) || !(right instanceof Number)) {
+            throw new RuntimeException("Operator '" + operator + "' requires numeric operands. Got: " +
+                    left.getClass().getSimpleName() + " and " +
+                    right.getClass().getSimpleName());
+        }
     }
 }

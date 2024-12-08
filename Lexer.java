@@ -11,6 +11,7 @@ public class Lexer {
             "\\s*(?:(tni|elbuod|loob|rahc)|" +      // Reversed types
                     "(prit|fi|rof)|" +                    // Other reversed keywords
                     "(eurt|eslaf)|" +                     // Boolean literals
+                    "(ro|dna)|" +                         // Boolean operators
                     "([a-zA-Z_][a-zA-Z0-9_]*)|" +         // Identifiers
                     "(\\d+\\.\\d+|\\d+)|" +               // Numbers
                     "'(\\\\\\\\.|[^\\\\\\\\'])'|" +               // Character literals
@@ -48,15 +49,20 @@ public class Lexer {
                             case "eurt": tokens.add(new Token(Token.Type.TRUE, "eurt")); break;
                             case "eslaf": tokens.add(new Token(Token.Type.FALSE, "eslaf")); break;
                         }
-                    }else if (matcher.group(4) != null) {
-                        tokens.add(new Token(Token.Type.IDENTIFIER, matcher.group(4)));
+                    }else if(matcher.group(4) != null){
+                        switch (matcher.group(4)){
+                            case "ro": tokens.add(new Token(Token.Type.OR, "or")); break;
+                            case "dna": tokens.add(new Token(Token.Type.AND, "and")); break;
+                        }
                     }else if (matcher.group(5) != null) {
-                        tokens.add(new Token(Token.Type.NUMBER, matcher.group(5)));
-                    }else if(matcher.group(6) != null){
+                        tokens.add(new Token(Token.Type.IDENTIFIER, matcher.group(5)));
+                    }else if (matcher.group(6) != null) {
+                        tokens.add(new Token(Token.Type.NUMBER, matcher.group(6)));
+                    }else if(matcher.group(7) != null){
                         //System.out.println("Lexer matched CHAR_LITERAL: " + matcher.group(6));
-                        tokens.add(new Token(Token.Type.CHAR_LITERAL, matcher.group(6)));
-                    }else if (matcher.group(7) != null) {
-                        switch (matcher.group(7)) {
+                        tokens.add(new Token(Token.Type.CHAR_LITERAL, matcher.group(7)));
+                    }else if (matcher.group(8) != null) {
+                        switch (matcher.group(8)) {
                             case "==": tokens.add(new Token(Token.Type.EQEQ, "==")); break;
                             case "!=": tokens.add(new Token(Token.Type.NOTEQ, "!=")); break;
                             case "<=": tokens.add(new Token(Token.Type.LESSEQ, "<=")); break;
@@ -64,8 +70,8 @@ public class Lexer {
                             case "<": tokens.add(new Token(Token.Type.LESS, "<")); break;
                             case ">": tokens.add(new Token(Token.Type.GREATER, ">")); break;
                         }
-                    }else if (matcher.group(8) != null) {
-                        switch (matcher.group(8)) {
+                    }else if (matcher.group(9) != null) {
+                        switch (matcher.group(9)) {
                             case "+": tokens.add(new Token(Token.Type.PLUS, "+")); break;
                             case "-": tokens.add(new Token(Token.Type.MINUS, "-")); break;
                             case "*": tokens.add(new Token(Token.Type.STAR, "*")); break;

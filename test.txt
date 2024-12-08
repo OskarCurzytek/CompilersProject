@@ -18,3 +18,9 @@ prit(((a-b)*c)/2);
 
 rahc chartest = 'a';
 prit(chartest);
+
+loob true_test = eurt;
+loob false_test = eslaf;
+
+prit(true_test);
+prit(false_test);
