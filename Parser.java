@@ -92,6 +92,12 @@ class Parser {
             ASTNode right = term();  // Parse the next term
             left = new BinaryOperationNode(left, operator, right); // Combine into AST
         }
+
+        while (match(Token.Type.AND, Token.Type.OR)) { // Handle "and"
+            Token operator = previous();
+            ASTNode right = term();
+            left = new BinaryOperationNode(left, operator, right);
+        }
         return left;
     }
 
@@ -135,7 +141,7 @@ class Parser {
 
     private void ifStatement() {
         consume(Token.Type.LPAREN, "Expected '(' after 'fi'.");
-        ASTNode condition = booleanExpression(); // Use booleanExpression for condition
+        ASTNode condition = expression(); // Use booleanExpression for condition
         consume(Token.Type.RPAREN, "Expected ')' after condition.");
         consume(Token.Type.LBRACE, "Expected '{' before 'fi' block.");
 
@@ -167,27 +173,5 @@ class Parser {
             statements.forEach(Runnable::run);
             interpreter.evaluate(increment);
         }
-    }
-
-    private ASTNode booleanExpression() {
-        ASTNode left = comparison(); // Start with a comparison
-
-        while (match(Token.Type.OR)) { // Handle "or"
-            Token operator = previous();
-            ASTNode right = comparison();
-            left = new BinaryOperationNode(left, operator, right);
-        }
-        return left;
-    }
-
-    private ASTNode comparison() {
-        ASTNode left = term(); // Start with a term
-
-        while (match(Token.Type.AND)) { // Handle "and"
-            Token operator = previous();
-            ASTNode right = term();
-            left = new BinaryOperationNode(left, operator, right);
-        }
-        return left;
     }
 }

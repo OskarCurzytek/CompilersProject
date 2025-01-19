@@ -1,10 +1,12 @@
 tni a = 1;
 tni b = 3;
 elbuod c = 4.5;
+elbuod d = a + b + c;
 
 prit(a);
 prit(b);
 prit(c);
+prit(d);
 
 prit(a + b);
 prit(a + c);
@@ -18,3 +20,11 @@ prit(((a-b)*c)/2);
 
 rahc chartest = 'a';
 prit(chartest);
+
+loob true_test = eurt;
+loob false_test = eslaf;
+
+prit(true_test);
+prit(false_test);
+
+prit(true_test dna false_test);
