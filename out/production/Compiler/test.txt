@@ -18,6 +18,15 @@ prit(c / b);
 prit((a-b)*c);
 prit(((a-b)*c)/2);
 
+prit(a < b);
+prit(a > b);
+prit(a <= b);
+prit(a >= b);
+prit(a == b);
+prit(a != b);
+
+prit((a<b) ro (a>b));
+
 rahc chartest = 'a';
 prit(chartest);
 
@@ -28,8 +37,12 @@ prit(true_test);
 prit(false_test);
 
 prit(true_test dna false_test);
+prit(true_test ro false_test);
 
-fi(a == 1){
+prit(true_test == false_test);
+prit(true_test != false_test);
+
+fi(true_test != false_test){
     prit(a);
 }esle{
     prit(b);
