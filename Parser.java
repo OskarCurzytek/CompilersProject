@@ -52,7 +52,9 @@ class Parser {
             varDeclaration();
         } else if (match(Token.Type.PRIT)) {
             printStatement();
-        } else {
+        }else if(match(Token.Type.FI)){
+            ifStatement();
+        }else {
             throw new RuntimeException("Unexpected statement.");
         }
     }
@@ -140,20 +142,40 @@ class Parser {
     }
 
     private void ifStatement() {
+        // Consume '(' token
         consume(Token.Type.LPAREN, "Expected '(' after 'fi'.");
-        ASTNode condition = expression(); // Use booleanExpression for condition
-        consume(Token.Type.RPAREN, "Expected ')' after condition.");
-        consume(Token.Type.LBRACE, "Expected '{' before 'fi' block.");
 
-        List<Runnable> statements = new ArrayList<>();
-        while (!match(Token.Type.RBRACE)) {
-            statements.add(() -> statement());
+        // Parse the condition
+        ASTNode condition = expression();
+
+        // Consume ')' token
+        consume(Token.Type.RPAREN, "Expected ')' after condition.");
+
+        // Consume '{' token for the block
+        consume(Token.Type.LBRACE, "Expected '{' before 'if' block.");
+
+        // Parse statements inside the block
+        while (!check(Token.Type.RBRACE) && !isAtEnd()) {
+            statement(); // Parse each statement
         }
 
+        // Consume '}' token to close the block
+        consume(Token.Type.RBRACE, "Expected '}' after 'if' block.");
+
+        // Evaluate the condition and execute the block if true
         if ((boolean) interpreter.evaluate(condition)) {
-            statements.forEach(Runnable::run);
+            // Re-parse the block statements if condition is true
+            while (!check(Token.Type.RBRACE) && !isAtEnd()) {
+                statement();
+            }
         }
     }
+
+    private boolean check(Token.Type type) {
+        if (isAtEnd()) return false;
+        return peek().type == type;
+    }
+
 
     private void forStatement() {
         consume(Token.Type.LPAREN, "Expected '(' after 'rof'.");

@@ -23,10 +23,10 @@ class Interpreter {
             //System.out.println("Left: " + left + ", Right: " + right); // Debug
             switch (binaryNode.operator.type) {
                 case OR:
-                    ensureBooleanOperands(left, right, "or");
+                    ensureBooleanOperands(left, right, "ro");
                     return (Boolean) left || (Boolean) right;
                 case AND:
-                    ensureBooleanOperands(left, right, "and");
+                    ensureBooleanOperands(left, right, "dna");
                     return (Boolean) left && (Boolean) right;
                 case PLUS:
                     ensureNumericOperands(left, right, "+");

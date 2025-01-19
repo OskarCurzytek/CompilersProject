@@ -28,3 +28,7 @@ prit(true_test);
 prit(false_test);
 
 prit(true_test dna false_test);
+
+fi(false_test){
+    prit(a);
+}
