@@ -29,7 +29,7 @@ prit(false_test);
 
 prit(true_test dna false_test);
 
-fi(true_test){
+fi(a < b){
     prit(a);
 }esle{
     prit(b);

@@ -57,6 +57,42 @@ class Interpreter {
                         }
                         return ((Number) left).doubleValue() / ((Number) right).doubleValue(); // Convert to double for division
                     }
+                case LESS:
+                    if(left instanceof Integer && right instanceof Integer){
+                        return (Integer) left < (Integer) right;
+                    }else {
+                        return (Double) left < (Double) right;
+                    }
+                case GREATER:
+                    if(left instanceof Integer && right instanceof Integer){
+                        return (Integer) left > (Integer) right;
+                    }else {
+                        return (Double) left > (Double) right;
+                    }
+                case LESSEQ:
+                    if(left instanceof Integer && right instanceof Integer){
+                        return (Integer) left <= (Integer) right;
+                    }else {
+                        return (Double) left <= (Double) right;
+                    }
+                case GREATEREQ:
+                    if(left instanceof Integer && right instanceof Integer){
+                        return (Integer) left >= (Integer) right;
+                    }else {
+                        return (Double) left >= (Double) right;
+                    }
+                case EQEQ:
+                    if(left instanceof Integer && right instanceof Integer){
+                        return ((Integer) left).equals((Integer) right);
+                    }else {
+                        return Objects.equals((Double) left, (Double) right);
+                    }
+                case NOTEQ:
+                    if(left instanceof Integer && right instanceof Integer){
+                        return !((Integer) left).equals((Integer) right);
+                    }else {
+                        return !Objects.equals((Double) left, (Double) right);
+                    }
                 default:
                     throw new RuntimeException("Unsupported operator: " + binaryNode.operator.type);
             }

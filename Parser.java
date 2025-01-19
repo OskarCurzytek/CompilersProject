@@ -100,6 +100,12 @@ class Parser {
             ASTNode right = term();
             left = new BinaryOperationNode(left, operator, right);
         }
+
+        while (match(Token.Type.LESS, Token.Type.GREATER, Token.Type.LESSEQ, Token.Type.GREATEREQ, Token.Type.EQEQ, Token.Type.NOTEQ)){
+            Token operator = previous();
+            ASTNode right = term();
+            left = new BinaryOperationNode(left, operator, right);
+        }
         return left;
     }
 
