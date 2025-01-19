@@ -155,20 +155,42 @@ class Parser {
         consume(Token.Type.LBRACE, "Expected '{' before 'if' block.");
 
         // Parse statements inside the block
-        while (!check(Token.Type.RBRACE) && !isAtEnd()) {
-            statement(); // Parse each statement
+        if ((boolean) interpreter.evaluate(condition)) {
+            while (!check(Token.Type.RBRACE) && !isAtEnd()) {
+                statement();
+            }
+        } else {
+            // Skip over the if block if condition is false
+            while (!check(Token.Type.RBRACE) && !isAtEnd()) {
+                advance();
+            }
         }
 
         // Consume '}' token to close the block
         consume(Token.Type.RBRACE, "Expected '}' after 'if' block.");
 
+
         // Evaluate the condition and execute the block if true
-        if ((boolean) interpreter.evaluate(condition)) {
-            // Re-parse the block statements if condition is true
-            while (!check(Token.Type.RBRACE) && !isAtEnd()) {
-                statement();
+        if (match(Token.Type.ESLE)) {
+            // Consume '{' token for the 'else' block
+            consume(Token.Type.LBRACE, "Expected '{' before 'else' block.");
+
+            if (!(boolean) interpreter.evaluate(condition)) {
+                // Parse and execute the statements inside the 'else' block
+                while (!check(Token.Type.RBRACE) && !isAtEnd()) {
+                    statement();
+                }
+            } else {
+                // Skip over the 'else' block if the condition was true
+                while (!check(Token.Type.RBRACE) && !isAtEnd()) {
+                    advance();
+                }
             }
+
+            // Consume '}' token to close the 'else' block
+            consume(Token.Type.RBRACE, "Expected '}' after 'else' block.");
         }
+
     }
 
     private boolean check(Token.Type type) {
