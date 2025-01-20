@@ -35,27 +35,27 @@ class Interpreter {
                             : ((Number) left).doubleValue() + ((Number) right).doubleValue();
                 case MINUS:
                     if (left instanceof Integer && right instanceof Integer) {
-                        return (Integer) left - (Integer) right; // Integer subtraction
+                        return (Integer) left - (Integer) right;
                     } else {
-                        return ((Number) left).doubleValue() - ((Number) right).doubleValue(); // Convert to double for subtraction
+                        return ((Number) left).doubleValue() - ((Number) right).doubleValue();
                     }
                 case STAR:
                     if (left instanceof Integer && right instanceof Integer) {
-                        return (Integer) left * (Integer) right; // Integer multiplication
+                        return (Integer) left * (Integer) right;
                     } else {
-                        return ((Number) left).doubleValue() * ((Number) right).doubleValue(); // Convert to double for multiplication
+                        return ((Number) left).doubleValue() * ((Number) right).doubleValue();
                     }
                 case SLASH:
                     if (left instanceof Integer && right instanceof Integer) {
                         if ((Integer) right == 0) {
                             throw new RuntimeException("Division by zero");
                         }
-                        return (Integer) left / (Integer) right; // Integer division
+                        return (Integer) left / (Integer) right;
                     } else {
                         if (((Number) right).doubleValue() == 0) {
                             throw new RuntimeException("Division by zero");
                         }
-                        return ((Number) left).doubleValue() / ((Number) right).doubleValue(); // Convert to double for division
+                        return ((Number) left).doubleValue() / ((Number) right).doubleValue();
                     }
                 case LESS:
                     if (left instanceof Integer && right instanceof Integer) {
@@ -109,14 +109,14 @@ class Interpreter {
         if (value.matches("\\d+\\.\\d+")) {
             return Double.parseDouble(value); // Parse doubles
         } else if (value.equals("eurt")) {
-            return true; // Boolean true
+            return true;
         } else if (value.equals("eslaf")) {
-            return false; // Boolean false
+            return false;
         } else if (value.matches("\\d+")) {
-            return Integer.parseInt(value); // Parse integers as doubles for simplicity
-        } else if (value.length() == 1) { // Match a single character inside single quotes
+            return Integer.parseInt(value);
+        } else if (value.length() == 1) {
             //System.out.println("Parsing character literal: " + value); // Debug
-            return value.charAt(0); // Extract the character from the single-quoted string
+            return value.charAt(0);
         }
         throw new RuntimeException("Invalid literal: " + value);
     }
@@ -128,7 +128,6 @@ class Interpreter {
         if (!name.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
             throw new RuntimeException("Invalid variable name: " + name);
         }
-        // Further type validations for `value` can be added here if needed.
         symbolTable.put(name, value);
     }
 
