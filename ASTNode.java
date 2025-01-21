@@ -9,7 +9,7 @@ class LiteralNode extends ASTNode {
 
     @Override
     public String toString(){
-        return "LiteralNode(value+'" + value + "')";
+        return "LiteralNode(value + '" + value + "')";
     }
 }
 

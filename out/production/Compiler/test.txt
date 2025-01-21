@@ -47,3 +47,7 @@ fi(true_test != false_test){
 }esle{
     prit(b);
 }
+
+rof (5){
+    prit(chartest);
+}
